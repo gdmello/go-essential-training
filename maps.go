@@ -13,19 +13,7 @@ func main() {
 
         var myctr = make(map[string]int)
 		for _, word  := range strings.Fields(text) {
-			_, exists := myctr[word]
-			if exists {
-				myctr[word] += 1
-			} else {
-				myctr[word] = 1
-			}
+			myctr[word]++
 		}
-
-		for word, ctr := range myctr {
-			if ctr > 1 {
-				fmt.Printf("%s ocurred %d times\n", word, ctr)
-			} else {
-				fmt.Println(word, "ocurred", ctr, "time")
-			}
-		}
+		fmt.Println(myctr)
 }
