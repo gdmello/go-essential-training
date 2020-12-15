@@ -38,3 +38,8 @@ func main() {
   ```go
     fmt.Println(*p) // dereferences p and prints 7 (the value of i)
   ```  
+* Type [Conversions](https://golang.org/ref/spec#Conversions) - change the type of an expression
+```
+[]byte("Some random string") // convert the string from String type to a 'byte slice' type
+```
+
