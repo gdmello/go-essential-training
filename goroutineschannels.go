@@ -4,22 +4,19 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"sync"
 )
 
-func returnType(url string) {
+func returnType(url string) string {
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Printf("error: %s\n", err)
-		return
+		return "error"
 	}
 
 	defer resp.Body.Close()
 	contentType := resp.Header.Get("content-type")
-	fmt.Printf("%s -> %s\n", url, contentType)
-
+	return contentType
 }
-
 
 func main() {
 	urls := []string {
@@ -28,13 +25,13 @@ func main() {
 		"https://httpbin.org/xml",
 	}
 
-	var wg sync.WaitGroup 
+	ch := make(chan string)
 	for _, url := range urls {
-		wg.Add(1)
 		go func(url string) {
-			returnType(url)
-			wg.Done()
+			ch <- returnType(url)
 		}(url)
+
+		ctype := <-ch
+		fmt.Printf("%s -> %s\n", url, ctype)
 	}
-	wg.Wait()
 }
