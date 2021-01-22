@@ -6,16 +6,16 @@ import (
 	"net/http"
 )
 
-func returnType(url string) string {
+func returnType(url string, ch chan string) {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("error: %s\n", err)
-		return "error"
+		ch <- fmt.Sprintf("error:%s", err)
+		return 
 	}
 
 	defer resp.Body.Close()
 	contentType := resp.Header.Get("content-type")
-	return contentType
+	ch <- fmt.Sprintf("%s -> %s", url, contentType)
 }
 
 func main() {
@@ -27,11 +27,11 @@ func main() {
 
 	ch := make(chan string)
 	for _, url := range urls {
-		go func(url string) {
-			ch <- returnType(url)
-		}(url)
+		go returnType(url, ch) //use go keyword to generate a goroutine
+	}
 
+	for range urls {
 		ctype := <-ch
-		fmt.Printf("%s -> %s\n", url, ctype)
+		fmt.Printf(ctype)
 	}
 }
